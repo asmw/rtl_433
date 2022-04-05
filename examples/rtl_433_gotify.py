@@ -10,12 +10,22 @@ import requests
 import sys
 import fire
 import json
+from datetime import datetime
 
-def main(host, token, protocol='https', port=443, priority=8, models=[]):
+def main(host, token, protocol='https', port=443, priority=8, models=[], debounce_secs=15):
     print(f"Running, host: {host}:{port}, model filter: {models}")
+
+    last_ts = datetime.now()
 
     for line in sys.stdin:
         print(f"Parsing: {line}")
+        current_ts = datetime.now()
+        delta = current_ts - last_ts
+        if delta.seconds < debounce_secs:
+            continue
+
+        last_ts = current_ts
+
         try:
             data = json.loads(line)
             if data["model"] not in models:
