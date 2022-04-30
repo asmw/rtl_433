@@ -31,12 +31,15 @@ def main(host, token, protocol='https', port=443, priority=8, models=[], debounc
             if data["model"] not in models:
                 continue
 
-            req = requests.post(f'{protocol}://{host}:{port}/message?token={token}', json={
-                "message": data["time"],
-                "priority": priority,
-                "title": data["model"]
-            })
-            print(req)
+            try:
+                req = requests.post(f'{protocol}://{host}:{port}/message?token={token}', json={
+                    "message": data["time"],
+                    "priority": priority,
+                    "title": data["model"]
+                })
+                print(req)
+            except Exception as e:
+                print(f"Request failed: {e}")
         except json.decoder.JSONDecodeError as e:
             print("Parse error: %s" % e.msg)
             continue
